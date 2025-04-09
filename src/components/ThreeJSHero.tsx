@@ -1,6 +1,11 @@
 
 import React, { useRef, useEffect } from "react";
 import { createArchitectureGrid } from "../utils/threeUtils";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+// Register the ScrollTrigger plugin
+gsap.registerPlugin(ScrollTrigger);
 
 interface ThreeJSHeroProps {
   title: string;
@@ -9,56 +14,83 @@ interface ThreeJSHeroProps {
 
 const ThreeJSHero: React.FC<ThreeJSHeroProps> = ({ title, subtitle }) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const threeRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLHeadingElement>(null);
+  const subtitleRef = useRef<HTMLParagraphElement>(null);
+  const overlayTextRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !threeRef.current) return;
     
     // Initialize the ThreeJS scene
-    const cleanup = createArchitectureGrid(containerRef.current);
+    const cleanup = createArchitectureGrid(threeRef.current);
     
-    // Parallax effect on mouse move
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-      
-      const x = e.clientX;
-      const y = e.clientY;
-      
-      const windowWidth = window.innerWidth;
-      const windowHeight = window.innerHeight;
-      
-      // Calculate offset based on mouse position
-      const moveX = (x - windowWidth / 2) * 0.01;
-      const moveY = (y - windowHeight / 2) * 0.01;
-      
-      containerRef.current.style.transform = `translateX(${moveX}px) translateY(${moveY}px)`;
-    };
+    // GSAP animations
+    const tl = gsap.timeline();
     
-    window.addEventListener('mousemove', handleMouseMove);
+    // Initial state
+    gsap.set(titleRef.current, { opacity: 0, y: 30 });
+    gsap.set(subtitleRef.current, { opacity: 0, y: 30 });
     
-    // Clean up when component unmounts
+    // Animate in
+    tl.to(titleRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 1.2,
+      ease: "power3.out",
+      delay: 0.5
+    })
+    .to(subtitleRef.current, {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      ease: "power2.out"
+    }, "-=0.8");
+    
+    // Scroll animations
+    gsap.to(threeRef.current, {
+      y: 200,
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    });
+    
+    gsap.to(overlayTextRef.current, {
+      y: -100,
+      scrollTrigger: {
+        trigger: containerRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true
+      }
+    });
+    
     return () => {
       cleanup();
-      window.removeEventListener('mousemove', handleMouseMove);
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, []);
   
   return (
-    <div className="relative h-screen w-full overflow-hidden">
+    <div ref={containerRef} className="relative h-screen w-full overflow-hidden">
       {/* ThreeJS Container */}
       <div 
-        ref={containerRef}
-        className="absolute inset-0 z-0 transition-transform duration-75 ease-out"
+        ref={threeRef}
+        className="absolute inset-0 z-0"
       />
       
       {/* Content Overlay */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center">
+      <div ref={overlayTextRef} className="absolute inset-0 z-10 flex items-center justify-center">
         <div className="container mx-auto px-4 md:px-10">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-5xl md:text-7xl lg:text-8xl font-kessler mb-4 opacity-0 animate-fade-in">
+            <h1 ref={titleRef} className="text-5xl md:text-7xl lg:text-9xl font-kessler mb-4">
               {title}
             </h1>
             {subtitle && (
-              <p className="text-lg md:text-xl opacity-80 mt-4 opacity-0 animate-fade-in" style={{ animationDelay: "0.3s" }}>
+              <p ref={subtitleRef} className="text-lg md:text-2xl opacity-80 mt-4 max-w-xl mx-auto">
                 {subtitle}
               </p>
             )}
@@ -67,7 +99,7 @@ const ThreeJSHero: React.FC<ThreeJSHeroProps> = ({ title, subtitle }) => {
       </div>
       
       {/* Scroll indicator */}
-      <div className="absolute bottom-10 left-0 right-0 flex justify-center animate-fade-in" style={{ animationDelay: "0.6s" }}>
+      <div className="absolute bottom-10 left-0 right-0 flex justify-center opacity-0 animate-fade-in" style={{ animationDelay: "1.6s" }}>
         <div className="flex flex-col items-center">
           <span className="text-sm uppercase tracking-widest mb-2">Scroll</span>
           <div className="h-12 w-0.5 bg-black opacity-50"></div>

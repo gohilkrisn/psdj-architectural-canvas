@@ -1,16 +1,15 @@
 
-import React from "react";
-import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { ArrowUpRight } from "lucide-react";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowUpRight } from 'lucide-react';
 
 interface ProjectCardProps {
   title: string;
   category: string;
   image: string;
   description?: string;
+  to: string;
   index?: number;
-  to?: string;
 }
 
 const ProjectCard: React.FC<ProjectCardProps> = ({
@@ -18,45 +17,41 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
   category,
   image,
   description,
-  index = 0,
-  to = "#"
+  to,
+  index = 0
 }) => {
   return (
     <Link 
       to={to} 
-      className={cn(
-        "group block relative overflow-hidden bg-secondary aspect-square",
-        "opacity-0",
-        "animate-fade-in"
-      )}
-      style={{ animationDelay: `${index * 0.1}s`, animationFillMode: "forwards" }}
+      className="project-card-hover block group opacity-0 animate-fade-in"
+      style={{ animationDelay: `${0.2 + index * 0.1}s` }}
     >
-      <div className="absolute inset-0 transition-transform duration-700 group-hover:scale-105">
+      <div className="relative overflow-hidden aspect-[4/5] mb-4">
         <img 
           src={image} 
           alt={title}
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60" />
+        <div className="absolute inset-0 bg-black/0 transition-all duration-300 group-hover:bg-black/20"></div>
+        <div className="absolute top-4 right-4 bg-black text-white w-8 h-8 flex items-center justify-center opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+          <ArrowUpRight size={16} />
+        </div>
       </div>
       
-      <div className="absolute inset-0 p-6 flex flex-col justify-between">
-        <div className="self-end text-xs text-white/90 tracking-wider">
+      <div className="flex items-baseline justify-between">
+        <h3 className="text-lg md:text-xl font-kessler">
+          {title}
+        </h3>
+        <span className="text-xs text-gray-500 uppercase tracking-wider">
           {category}
-        </div>
-        
-        <div className="text-white">
-          <h3 className="text-lg md:text-xl font-light">{title}</h3>
-          {description && (
-            <p className="text-sm text-white/80 mt-1">{description}</p>
-          )}
-          
-          <div className="mt-4 flex items-center opacity-0 transform translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-            <span className="text-sm mr-2">View Project</span>
-            <ArrowUpRight size={16} />
-          </div>
-        </div>
+        </span>
       </div>
+      
+      {description && (
+        <p className="text-gray-600 mt-2 text-sm">
+          {description}
+        </p>
+      )}
     </Link>
   );
 };

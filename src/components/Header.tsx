@@ -33,9 +33,16 @@ const Header: React.FC = () => {
       <div className="container mx-auto flex items-center justify-between">
         <Link 
           to="/"
-          className="text-2xl font-mono font-bold tracking-tighter"
+          className="flex items-center"
         >
-          {siteData.companyName}
+          <img 
+            src="/lovable-uploads/99dc09e2-c36d-4531-a1a8-d451b9ee66bc.png" 
+            alt="PSDJ Interior Architecture" 
+            className="h-10 w-auto mr-4"
+          />
+          <span className="font-kessler text-lg tracking-wide hidden md:block">
+            INTERIOR ARCHITECTURE
+          </span>
         </Link>
         
         {/* Desktop Navigation */}
@@ -46,7 +53,7 @@ const Header: React.FC = () => {
                 <Link
                   to={item.path}
                   className={cn(
-                    "hover-line text-sm uppercase tracking-widest transition-colors",
+                    "hover-line text-sm uppercase tracking-widest transition-colors font-light",
                     location.pathname === item.path ? "text-black" : "text-gray-500"
                   )}
                 >
@@ -81,7 +88,7 @@ const Header: React.FC = () => {
                 <Link
                   to={item.path}
                   className={cn(
-                    "text-2xl uppercase font-light tracking-widest block",
+                    "text-3xl uppercase font-kessler tracking-widest block",
                     location.pathname === item.path ? "text-black" : "text-gray-500"
                   )}
                 >

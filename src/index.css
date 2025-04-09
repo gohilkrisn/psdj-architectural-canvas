@@ -1,5 +1,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap');
+@import url('https://use.typekit.net/kss7mmy.css'); /* Kessler Display font from Adobe Fonts */
 
 @tailwind base;
 @tailwind components;
@@ -42,9 +43,14 @@
     @apply border-border;
   }
   
+  html {
+    scroll-behavior: smooth;
+  }
+  
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02";
+    overflow-x: hidden;
   }
   
   .text-outline {
@@ -84,5 +90,50 @@
   @keyframes fade-in {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Parallax effects */
+  .parallax-container {
+    overflow: hidden;
+    position: relative;
+  }
+  
+  .parallax-bg {
+    position: absolute;
+    width: 100%;
+    height: 120%;
+    top: -10%;
+    left: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.1s ease-out;
+    z-index: -1;
+  }
+  
+  .parallax-content {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Modern SHH-inspired styles */
+  .large-number {
+    @apply font-kessler text-8xl md:text-9xl opacity-20 absolute -top-10 -left-6 z-0;
+  }
+  
+  .project-card-hover {
+    @apply transition-all duration-500;
+  }
+  
+  .project-card-hover:hover img {
+    @apply scale-105 opacity-90;
+  }
+  
+  .project-card-hover img {
+    @apply transition-all duration-500;
+  }
+  
+  .text-vertical {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
   }
 }

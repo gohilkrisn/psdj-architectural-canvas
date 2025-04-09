@@ -1,382 +1,249 @@
 
-import React, { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
-import { siteData } from "../data/siteData";
+import React, { useRef, useEffect } from "react";
 import ThreeJSHero from "../components/ThreeJSHero";
 import ThreeJSAccent from "../components/ThreeJSAccent";
 import ThreeJSInteriorScene from "../components/ThreeJSInteriorScene";
-import ProjectCard from "../components/ProjectCard";
 import ParallaxSection from "../components/ParallaxSection";
 import ScrollAnimation from "../components/ScrollAnimation";
-import { ArrowRight, ArrowDown, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Register ScrollTrigger with GSAP
 gsap.registerPlugin(ScrollTrigger);
 
 const Home = () => {
-  const [scrollY, setScrollY] = useState(0);
-  const introRef = useRef<HTMLDivElement>(null);
-  const sectionRefs = useRef<HTMLDivElement[]>([]);
-  
+  const projectsRef = useRef<HTMLDivElement>(null);
+  const introTextRef = useRef<HTMLDivElement>(null);
+  const quoteRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    window.scrollTo(0, 0);
-    
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
-    };
-    
-    window.addEventListener("scroll", handleScroll);
-    
-    // Initialize scroll animations
-    sectionRefs.current.forEach((section, index) => {
+    // Staggered animation for projects section
+    if (projectsRef.current) {
+      const projectItems = projectsRef.current.querySelectorAll('.project-item');
+      
       gsap.fromTo(
-        section.querySelectorAll('.animate-on-scroll'),
+        projectItems,
         { opacity: 0, y: 50 },
         {
           opacity: 1,
           y: 0,
-          stagger: 0.1,
-          duration: 0.8,
+          stagger: 0.2,
+          scrollTrigger: {
+            trigger: projectsRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+    }
+
+    // Animation for intro text
+    if (introTextRef.current) {
+      const childElements = introTextRef.current.children;
+      
+      gsap.fromTo(
+        childElements,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          stagger: 0.2,
+          duration: 1,
           ease: "power2.out",
           scrollTrigger: {
-            trigger: section,
-            start: "top 75%"
+            trigger: introTextRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+    }
+
+    // Parallax and fade for quote section
+    if (quoteRef.current) {
+      gsap.fromTo(
+        quoteRef.current,
+        { opacity: 0 },
+        {
+          opacity: 1,
+          scrollTrigger: {
+            trigger: quoteRef.current,
+            start: "top 70%",
+            end: "center 50%",
+            scrub: true,
           }
         }
       );
-    });
-    
+    }
+
     return () => {
-      window.removeEventListener("scroll", handleScroll);
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      // Clean up ScrollTrigger instances
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
     };
   }, []);
-  
-  const scrollToIntro = () => {
-    introRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-  
-  // Add section to refs
-  const addSectionRef = (el: HTMLDivElement | null) => {
-    if (el && !sectionRefs.current.includes(el)) {
-      sectionRefs.current.push(el);
-    }
-  };
-  
+
   return (
-    <div className="min-h-screen">
-      {/* Hero Section with enhanced 3D */}
-      <section className="relative h-screen flex items-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <ThreeJSHero 
-            title="Interior Architecture with Vision"
-            subtitle="Creating spaces that inspire and endure"
-          />
-        </div>
-        
-        <button 
-          onClick={scrollToIntro}
-          className="absolute bottom-10 left-0 right-0 mx-auto flex items-center justify-center opacity-0 animate-fade-in z-10"
-          style={{ animationDelay: "2s" }}
-        >
-          <div className="flex flex-col items-center cursor-pointer">
-            <span className="mr-2 text-sm uppercase tracking-widest mb-2">EXPLORE</span>
-            <ArrowDown size={24} className="animate-float" />
-          </div>
-        </button>
-      </section>
+    <div>
+      {/* Hero Section with ThreeJS */}
+      <ThreeJSHero 
+        title="PSDJ INTERIORS" 
+        subtitle="We create spaces that inspire, function, and reflect your vision."
+      />
       
-      {/* Intro Section with Parallax */}
-      <section ref={(el) => { 
-        if (el) {
-          introRef.current = el;
-          addSectionRef(el);
-        }
-      }} className="py-24 md:py-40">
-        <div className="container mx-auto px-4 md:px-10">
-          <ScrollAnimation animation="fade-up" className="max-w-5xl mx-auto">
-            <p className="text-2xl md:text-4xl font-kessler leading-relaxed">
-              We transform environments through thoughtful design, crafting spaces that reflect our clients' identities while pushing the boundaries of architectural innovation.
+      {/* Introduction Text Section */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4">
+          <div 
+            ref={introTextRef} 
+            className="max-w-4xl mx-auto text-center space-y-6"
+          >
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-kessler">Design that transforms spaces</h2>
+            <p className="text-lg opacity-80">
+              PSDJ Interior Architecture approaches each project with a blend of imagination, 
+              precision, and dedication to creating environments that resonate with their 
+              occupants and surroundings.
             </p>
-          </ScrollAnimation>
-          
-          <div className="mt-20 md:mt-32 grid grid-cols-1 md:grid-cols-2 gap-12">
-            <ScrollAnimation animation="fade-right" delay={0.2} className="animate-on-scroll">
-              <h2 className="text-3xl font-kessler mb-5">Our Approach</h2>
-              <p className="text-gray-600">
-                We transform environments through thoughtful design, crafting spaces that reflect our clients' identities while pushing the boundaries of architectural innovation. Our approach combines rigorous attention to detail with a deep understanding of how people interact with their environments.
-              </p>
-              <p className="text-gray-600 mt-4">
-                Every project begins with a thorough exploration of our client's needs, the site context, and the potential for innovation. We believe that exceptional design emerges from this foundation of understanding.
-              </p>
-            </ScrollAnimation>
-            
-            <ScrollAnimation animation="fade-left" delay={0.4} className="animate-on-scroll">
-              <h2 className="text-3xl font-kessler mb-5">Our Vision</h2>
-              <p className="text-gray-600">
-                To redefine interior architecture by creating environments that seamlessly blend aesthetics, functionality, and human-centered design principles. We see each project as an opportunity to create spaces that not only accommodate their intended use but elevate the experience of those who inhabit them.
-              </p>
-              <p className="text-gray-600 mt-4">
-                We strive to balance innovation with timelessness, creating spaces that feel contemporary yet enduring. Our vision extends beyond the immediate project to how our work contributes to a more thoughtful built environment.
-              </p>
-            </ScrollAnimation>
+            <div className="pt-8">
+              <Button className="text-lg px-8 py-6">Our Philosophy</Button>
+            </div>
           </div>
         </div>
       </section>
       
-      {/* 3D Interior Scene Visualization */}
-      <section ref={addSectionRef} className="py-24 bg-gray-50">
-        <ThreeJSInteriorScene 
-          title="Spatial Design Excellence"
-          description="We carefully craft each space with precision and creativity, merging functionality with aesthetics to create environments that respond to our clients' needs while pushing boundaries of what's possible in interior architecture."
-        />
-      </section>
-      
-      {/* About/Philosophy Section with Enhanced Parallax */}
-      <ParallaxSection 
-        imageUrl="https://images.unsplash.com/photo-1497604401993-f2e922e5cb0a?auto=format&fit=crop&w=2000&q=80"
-        className="py-32 md:py-40 text-white relative"
-        overlay={true}
-        overlayOpacity={0.7}
-      >
-        <div className="container mx-auto px-4 md:px-10 relative z-10">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-24">
-            <div>
-              <h2 className="text-4xl md:text-5xl font-kessler mb-10">
-                {siteData.home.about.title}
-              </h2>
-              <p className="text-gray-300 mb-8 text-lg">
-                {siteData.home.about.content}
-              </p>
-              <p className="text-gray-300 mb-8 text-lg">
-                Our collaborative approach ensures that every decision is informed by both creative vision and practical considerations. We believe that successful interior architecture is measured not just by its aesthetic impact, but by how well it serves its purpose over time.
-              </p>
-              
-              <Link 
-                to="/expertise" 
-                className="inline-flex items-center group"
-              >
-                <span className="hover-line text-white">Learn more about our expertise</span>
-                <ArrowRight size={16} className="ml-2 transition-transform group-hover:translate-x-1" />
-              </Link>
+      {/* Projects Preview Section */}
+      <section className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-kessler text-center mb-16">Featured Projects</h2>
+          
+          <div 
+            ref={projectsRef} 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {/* Project 1 */}
+            <div className="project-item group">
+              <div className="overflow-hidden mb-4">
+                <img 
+                  src="https://images.unsplash.com/photo-1600585152220-90363fe7e115?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                  alt="Modern living room" 
+                  className="w-full h-80 object-cover transform transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <h3 className="text-2xl font-kessler mb-2">Riverside Penthouse</h3>
+              <p className="text-sm uppercase tracking-wide opacity-70">RESIDENTIAL DESIGN</p>
             </div>
             
-            <div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {siteData.home.about.values.map((value, index) => (
-                  <div key={value.title} className="border border-white/20 backdrop-blur-sm bg-black/30 p-8 relative">
-                    <span className="large-number text-white/10">{index + 1}</span>
-                    <h3 className="text-2xl font-kessler mb-4 relative z-10">{value.title}</h3>
-                    <p className="text-gray-400 text-base relative z-10">{value.description}</p>
-                  </div>
-                ))}
+            {/* Project 2 */}
+            <div className="project-item group">
+              <div className="overflow-hidden mb-4">
+                <img 
+                  src="https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                  alt="Modern office space" 
+                  className="w-full h-80 object-cover transform transition-transform duration-500 group-hover:scale-105"
+                />
               </div>
+              <h3 className="text-2xl font-kessler mb-2">Artisan Studios</h3>
+              <p className="text-sm uppercase tracking-wide opacity-70">COMMERCIAL DESIGN</p>
             </div>
+            
+            {/* Project 3 */}
+            <div className="project-item group">
+              <div className="overflow-hidden mb-4">
+                <img 
+                  src="https://images.unsplash.com/photo-1540518614846-7eded433c457?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
+                  alt="Boutique hotel lobby" 
+                  className="w-full h-80 object-cover transform transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <h3 className="text-2xl font-kessler mb-2">Serenity Hotel</h3>
+              <p className="text-sm uppercase tracking-wide opacity-70">HOSPITALITY DESIGN</p>
+            </div>
+          </div>
+          
+          <div className="text-center mt-16">
+            <Button variant="outline" className="text-lg px-8 py-6">View All Projects</Button>
+          </div>
+        </div>
+      </section>
+      
+      {/* ThreeJS Interior Scene */}
+      <ThreeJSInteriorScene 
+        title="Spatial Design Philosophy"
+        description="We believe in the transformative power of thoughtfully designed spaces. Every project begins with understanding how people will live, work, and interact within the environment."
+      />
+      
+      {/* Quote Section with Parallax */}
+      <ParallaxSection 
+        imageUrl="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
+        className="h-[500px]"
+        overlay={true}
+        overlayOpacity={0.6}
+      >
+        <div className="container mx-auto px-4 h-full flex items-center justify-center">
+          <div 
+            ref={quoteRef} 
+            className="max-w-3xl text-center text-white"
+          >
+            <h2 className="text-3xl md:text-5xl font-kessler mb-6">
+              "Design is not making beauty; beauty emerges from selection, affinities, integration."
+            </h2>
+            <p className="text-xl opacity-90">Louis Kahn</p>
           </div>
         </div>
       </ParallaxSection>
       
-      {/* Process Section with 3D Accent */}
-      <section ref={addSectionRef} className="py-28 md:py-40">
-        <div className="container mx-auto px-4 md:px-10">
-          <ScrollAnimation animation="fade-up" className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-kessler mb-5">Our Process</h2>
-            <p className="text-gray-600 max-w-3xl mx-auto">
-              Our methodical approach ensures every project is executed with precision, creativity and attention to detail from concept to completion.
-            </p>
-          </ScrollAnimation>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mt-20">
-            {[
-              {
-                title: "Discovery",
-                description: "We begin with a deep dive into your needs, aspirations, and the context of your space.",
-                icon: <Plus className="w-8 h-8" />
-              },
-              {
-                title: "Design Development",
-                description: "Our team creates detailed concepts that transform ideas into visually compelling spaces.",
-                icon: <Plus className="w-8 h-8" />
-              },
-              {
-                title: "Implementation",
-                description: "We oversee the entire execution process, ensuring every detail is realized as envisioned.",
-                icon: <Plus className="w-8 h-8" />
-              }
-            ].map((item, index) => (
-              <ScrollAnimation 
-                key={item.title} 
-                animation="fade-up" 
-                delay={0.2 * index} 
-                className="animate-on-scroll"
-              >
-                <div className="flex flex-col items-center text-center">
-                  <div className="relative mb-8">
-                    <div className="w-20 h-20 rounded-full bg-black flex items-center justify-center">
-                      <span className="text-white">{item.icon}</span>
-                    </div>
-                    <span className="absolute -top-5 -right-5 text-6xl font-kessler text-black opacity-20">
-                      0{index + 1}
-                    </span>
+      {/* Services Section with ThreeJS Accent */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col md:flex-row items-center">
+            <div className="w-full md:w-1/2 mb-12 md:mb-0">
+              <ScrollAnimation animation="fade-left" className="space-y-6">
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-kessler mb-6">Our Services</h2>
+                <p className="text-lg opacity-80 max-w-lg">
+                  From concept to completion, we offer a comprehensive range of interior 
+                  architecture services tailored to residential, commercial, and 
+                  hospitality projects.
+                </p>
+                
+                <div className="space-y-8 mt-12">
+                  <div className="border-l-2 border-black pl-6">
+                    <h3 className="text-2xl font-kessler mb-2">Interior Architecture</h3>
+                    <p className="opacity-80">Comprehensive spatial planning and design solutions</p>
                   </div>
-                  <h3 className="text-2xl font-kessler mb-4">{item.title}</h3>
-                  <p className="text-gray-600">{item.description}</p>
+                  
+                  <div className="border-l-2 border-black pl-6">
+                    <h3 className="text-2xl font-kessler mb-2">Concept Development</h3>
+                    <p className="opacity-80">Creative direction and vision for your space</p>
+                  </div>
+                  
+                  <div className="border-l-2 border-black pl-6">
+                    <h3 className="text-2xl font-kessler mb-2">Technical Documentation</h3>
+                    <p className="opacity-80">Detailed drawings and specifications for execution</p>
+                  </div>
                 </div>
               </ScrollAnimation>
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      {/* ThreeJS Accent with Particle Animation */}
-      <section ref={addSectionRef} className="py-16 bg-gray-50">
-        <div className="container mx-auto px-4 md:px-10">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="w-full md:w-1/2 h-80 md:h-[500px] mb-10 md:mb-0">
-              <ThreeJSAccent
-                type="particles"
-                className="w-full h-full"
-              />
             </div>
             
-            <ScrollAnimation animation="fade-left" className="w-full md:w-1/2 md:pl-16">
-              <h2 className="text-4xl font-kessler mb-6">Design Philosophy</h2>
-              <p className="text-lg text-gray-600 mb-6">
-                Our work is defined by a commitment to creating spaces that feel both contemporary and timeless. We believe that exceptional interior architecture should balance innovation with an understanding of classic design principles.
-              </p>
-              <p className="text-lg text-gray-600">
-                Each project is approached as a unique opportunity to create something tailored to the specific context, client needs, and potential for creative expression.
-              </p>
-            </ScrollAnimation>
-          </div>
-        </div>
-      </section>
-      
-      {/* Featured Projects with Modern Look */}
-      <section ref={addSectionRef} className="py-28 md:py-40">
-        <div className="container mx-auto px-4 md:px-10">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16">
-            <ScrollAnimation animation="fade-right" className="animate-on-scroll">
-              <h2 className="text-4xl md:text-5xl font-kessler mb-6 md:mb-0">
-                {siteData.home.featured.title}
-              </h2>
-            </ScrollAnimation>
-            
-            <ScrollAnimation animation="fade-left" className="animate-on-scroll">
-              <Link 
-                to="/our-work" 
-                className="inline-flex items-center group"
-              >
-                <span className="hover-line text-lg">View all projects</span>
-                <ArrowRight size={18} className="ml-2 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </ScrollAnimation>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 md:gap-8">
-            {[
-              {
-                title: "Meridian Loft",
-                category: "Residential",
-                image: "https://images.unsplash.com/photo-1600210492486-724fe5c67fb3?auto=format&fit=crop&w=1200&q=80",
-                description: "A minimalist penthouse with panoramic city views."
-              },
-              {
-                title: "Vertex Gallery",
-                category: "Commercial",
-                image: "https://images.unsplash.com/photo-1594844311819-a0f462d45a3a?auto=format&fit=crop&w=1200&q=80",
-                description: "A contemporary art gallery with flexible exhibition spaces."
-              },
-              {
-                title: "Nova Restaurant",
-                category: "Hospitality",
-                image: "https://images.unsplash.com/photo-1504474298956-b1812fe43d92?auto=format&fit=crop&w=1200&q=80",
-                description: "An intimate dining environment with dramatic lighting design."
-              }
-            ].map((project, index) => (
-              <ProjectCard
-                key={project.title}
-                title={project.title}
-                category={project.category}
-                image={project.image}
-                description={project.description}
-                index={index}
-                to="/our-work"
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-      
-      {/* Recent Recognition/Awards Section */}
-      <section ref={addSectionRef} className="py-20 md:py-28 bg-black text-white">
-        <div className="container mx-auto px-4 md:px-10">
-          <div className="max-w-4xl mx-auto text-center">
-            <ScrollAnimation animation="fade-up" className="animate-on-scroll">
-              <h2 className="text-4xl md:text-5xl font-kessler mb-12">
-                Recognition
-              </h2>
-            </ScrollAnimation>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-16">
-              {[
-                { year: "2023", award: "Interior Design Excellence Award" },
-                { year: "2022", award: "Best Commercial Space" },
-                { year: "2021", award: "Innovation in Design" },
-                { year: "2020", award: "Sustainable Architecture Award" },
-              ].map((item, index) => (
-                <ScrollAnimation 
-                  key={item.award} 
-                  animation="fade-up" 
-                  delay={0.1 * index}
-                  className="animate-on-scroll"
-                >
-                  <p className="text-lg font-kessler mb-1">{item.year}</p>
-                  <p className="text-gray-400 text-sm">{item.award}</p>
-                </ScrollAnimation>
-              ))}
+            <div className="w-full md:w-1/2 flex justify-center">
+              <ThreeJSAccent className="h-96 w-96" type="particles" />
             </div>
-            
-            <ScrollAnimation animation="fade-up" delay={0.5} className="animate-on-scroll">
-              <p className="text-gray-300 mb-8">
-                Our work has been recognized by leading industry organizations and publications for its innovative approach to interior architecture and commitment to excellence.
-              </p>
-              <div className="flex justify-center space-x-8">
-                <div className="h-8 w-20 bg-white/20"></div>
-                <div className="h-8 w-20 bg-white/20"></div>
-                <div className="h-8 w-20 bg-white/20"></div>
-              </div>
-            </ScrollAnimation>
           </div>
         </div>
       </section>
       
-      {/* CTA Section with Parallax */}
-      <ParallaxSection
-        imageUrl="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=2000&q=80"
-        className="py-28 md:py-40 relative min-h-[60vh] flex items-center"
-        overlay={true}
-      >
-        <div className="container mx-auto px-4 md:px-10 relative z-10">
-          <div className="max-w-3xl">
-            <h2 className="text-4xl md:text-6xl font-kessler mb-8 text-white">
-              Ready to transform your space?
-            </h2>
-            <p className="text-xl text-gray-300 mb-10 max-w-xl">
-              Let's collaborate on your next project and create an environment that inspires and elevates the human experience.
+      {/* Call to Action */}
+      <section className="py-20 bg-gray-900 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <ScrollAnimation animation="scale-in" className="space-y-8">
+            <h2 className="text-3xl md:text-5xl font-kessler">Ready to transform your space?</h2>
+            <p className="text-xl opacity-80 max-w-2xl mx-auto">
+              Let's collaborate to create an environment that inspires and functions beautifully.
             </p>
-            <Link 
-              to="/contact" 
-              className="inline-flex items-center bg-white text-black px-8 py-4 text-sm uppercase tracking-wider hover:bg-gray-200 transition-colors"
-            >
-              <span>Start a project</span>
-              <ArrowRight size={16} className="ml-2" />
-            </Link>
-          </div>
+            <div className="pt-4">
+              <Button className="text-lg px-10 py-6 bg-white text-gray-900 hover:bg-gray-100">
+                Contact Us
+              </Button>
+            </div>
+          </ScrollAnimation>
         </div>
-      </ParallaxSection>
+      </section>
     </div>
   );
 };

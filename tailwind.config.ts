@@ -20,9 +20,10 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				sans: ['Neue Haas Unica', 'Inter', 'sans-serif'],
+				sans: ['Montserrat', 'Inter', 'sans-serif'],
 				mono: ['Space Mono', 'monospace'],
 				kessler: ['kessler-display', 'serif'],
+				serif: ['Cormorant Garamond', 'serif'],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -66,20 +67,12 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
 				},
 				'fade-in': {
 					'0%': { opacity: '0', transform: 'translateY(10px)' },

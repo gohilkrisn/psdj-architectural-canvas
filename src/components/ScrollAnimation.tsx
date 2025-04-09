@@ -37,22 +37,22 @@ const ScrollAnimation: React.FC<ScrollAnimationProps> = ({
     // Set initial state based on animation type
     switch(animation) {
       case 'fade-up':
-        gsap.set(element, { y: 50, opacity: 0 });
+        gsap.set(element, { y: 30, opacity: 0 });
         break;
       case 'fade-down':
-        gsap.set(element, { y: -50, opacity: 0 });
+        gsap.set(element, { y: -30, opacity: 0 });
         break;
       case 'fade-left':
-        gsap.set(element, { x: 50, opacity: 0 });
+        gsap.set(element, { x: 30, opacity: 0 });
         break;
       case 'fade-right':
-        gsap.set(element, { x: -50, opacity: 0 });
+        gsap.set(element, { x: -30, opacity: 0 });
         break;
       case 'scale-in':
-        gsap.set(element, { scale: 0.8, opacity: 0 });
+        gsap.set(element, { scale: 0.9, opacity: 0 });
         break;
       case 'rotate':
-        gsap.set(element, { rotation: 10, opacity: 0 });
+        gsap.set(element, { rotation: 5, opacity: 0 });
         break;
       default:
         gsap.set(element, { opacity: 0 });
@@ -68,7 +68,9 @@ const ScrollAnimation: React.FC<ScrollAnimationProps> = ({
         trigger: element,
         start: triggerPosition,
         markers,
-        scrub: scrub
+        scrub: scrub,
+        once: true, // Play animation only once for performance
+        toggleActions: "play none none none" // Only plays when scrolling down, doesn't reverse
       }
     };
     

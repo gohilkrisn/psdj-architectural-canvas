@@ -14,10 +14,9 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import SplashScreen from "./components/SplashScreen";
 
-// Create a client
-const queryClient = new QueryClient();
-
 const App = () => {
+  // Create a client - initialized inside the component
+  const queryClient = new QueryClient();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

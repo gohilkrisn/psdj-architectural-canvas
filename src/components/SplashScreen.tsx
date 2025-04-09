@@ -2,9 +2,9 @@
 import React, { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 
-const SplashScreen = () => {
-  const logoRef = useRef(null);
-  const textRef = useRef(null);
+const SplashScreen: React.FC = () => {
+  const logoRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     const tl = gsap.timeline();
